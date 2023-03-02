@@ -23,5 +23,15 @@ jobs:
         # Path of the directory containing the static assets.
         path: build/
 
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+  
+    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+    permissions:
+      pages: write      # to deploy to Pages
+      id-token: write   # to verify the deployment originates from an appropriate source
+
+    steps:
     - name: Deploy GitHub Pages site
       uses: actions/deploy-pages@v1.2.4
