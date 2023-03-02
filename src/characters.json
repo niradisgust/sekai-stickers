@@ -1,5 +1,19 @@
 [
     {
+        "id": "1000",
+        "name": "Una 01",
+        "character": "una",
+        "img": "una/una_01.png",
+        "color": "#FF66BB",
+        "defaultText": {
+            "text": "military",
+            "x": 148,
+            "y": 58,
+            "r": -2,
+            "s": 47
+        }
+    },
+    {
         "id": "3",
         "name": "Airi 01",
         "character": "airi",

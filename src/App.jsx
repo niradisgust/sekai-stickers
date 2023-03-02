@@ -40,7 +40,7 @@ function App() {
     setInfoOpen(false);
   };
 
-  const [character, setCharacter] = useState(49);
+  const [character, setCharacter] = useState(0);
   const [text, setText] = useState(characters[character].defaultText.text);
   const [position, setPosition] = useState({
     x: characters[character].defaultText.x,
