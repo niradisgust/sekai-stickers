@@ -1,6 +1,6 @@
 import "./App.css";
 import Canvas from "./components/Canvas";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import characters from "./characters.json";
 import Slider from "@mui/material/Slider";
 import TextField from "@mui/material/TextField";
@@ -51,9 +51,11 @@ function App() {
   const [rotate, setRotate] = useState(characters[character].defaultText.r);
   const [curve, setCurve] = useState(false);
   const [loaded, setLoaded] = useState(false);
-  const img = new Image();
+  const imgRef = useRef(null);
 
-  useEffect(() => {
+  // function is cached for picker memoization
+  const handlePickCharacter = useCallback((character) => {
+    setCharacter(character);
     setText(characters[character].defaultText.text);
     setPosition({
       x: characters[character].defaultText.x,
@@ -62,13 +64,36 @@ function App() {
     setRotate(characters[character].defaultText.r);
     setFontSize(characters[character].defaultText.s);
     setLoaded(false);
-  }, [character]);
+  }, []);
 
-  img.src = `${process.env.PUBLIC_URL}/img/` + characters[character].img;
+  useEffect(() => {
+    if (loaded) return;
 
-  img.onload = () => {
-    setLoaded(true);
-  };
+    const resources = [
+      // load character image
+      new Promise((resolve, reject) => {
+        const img = new Image();
+        img.addEventListener("load", () => resolve(img));
+        img.addEventListener("error", (err) => reject(err));
+        img.src = `${process.env.PUBLIC_URL}/img/` + characters[character].img;
+      }),
+      // load fonts
+      document.fonts.load("12px YurukaStd"),
+      document.fonts.load("12px SSFangTangTi")
+    ];
+
+    let cancelled = false;
+    Promise.all(resources).then(([img]) => {
+      if (!cancelled) {
+        imgRef.current = img;
+        setLoaded(true);
+      }
+    }).catch((err) => console.error(err));
+
+    return () => {
+      cancelled = true;
+    };
+  }, [loaded, character]);
 
   let angle = (Math.PI * text.length) / 7;
 
@@ -76,7 +101,8 @@ function App() {
     ctx.canvas.width = 296;
     ctx.canvas.height = 256;
 
-    if (loaded && document.fonts.check("12px YurukaStd")) {
+    if (loaded) {
+      const img = imgRef.current;
       var hRatio = ctx.canvas.width / img.width;
       var vRatio = ctx.canvas.height / img.height;
       var ratio = Math.min(hRatio, vRatio);
@@ -264,7 +290,7 @@ function App() {
             />
           </div>
           <div className="picker">
-            <Picker setCharacter={setCharacter} />
+            <Picker setCharacter={handlePickCharacter} />
           </div>
           <div className="buttons">
             <Button color="secondary" onClick={copy}>
