@@ -28,6 +28,20 @@
         }
     },
     {
+        "id": "1002",
+        "name": "Snsei 01",
+        "character": "snsei",
+        "img": "snsei/snsei_01.png",
+        "color": "#BB88EE",
+        "defaultText": {
+            "text": "snsei",
+            "x": 148,
+            "y": 58,
+            "r": -2,
+            "s": 47
+        }
+    },
+    {
         "id": "3",
         "name": "Airi 01",
         "character": "airi",
